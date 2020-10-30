@@ -49,36 +49,34 @@ app.get('/about', (req, res) => {
 //Route that checks if there is a query first to display the appropriate employees
 app.get('/employees', (req, res) => {
 
-    if (req.query) {
-        if (req.query.status) {
-            Dataservice.getEmployeesByStatus(req.query.status)
-            .then((data) => {
-                res.json(data);
-            })
-            .catch((err) => {
-                res.send(err);
-            })
-        }
+    if (req.query.status) {
+        Dataservice.getEmployeesByStatus(req.query.status)
+        .then((data) => {
+            res.json(data);
+        })
+        .catch((err) => {
+            res.send(err);
+        })
+    }
 
-        if (req.query.department) {
-            Dataservice.getEmployeesByDepartment(req.query.department) 
-            .then((data => {
-                res.json(data);
-            }))
-            .catch((err) => {
-                res.send(err);
-            })
-        }
+    else if (req.query.department) {
+        Dataservice.getEmployeesByDepartment(req.query.department) 
+        .then((data => {
+            res.json(data);
+        }))
+        .catch((err) => {
+            res.send(err);
+        })
+    }
 
-        if (req.query.manager) {
-            Dataservice.getEmployeesByManager(req.query.manager) 
-            .then((data => {
-                res.json(data);
-            }))
-            .catch((err) => {
-                res.send(err);
-            })
-        }
+    else if (req.query.manager) {
+        Dataservice.getEmployeesByManager(req.query.manager) 
+        .then((data => {
+            res.json(data);
+        }))
+        .catch((err) => {
+            res.send(err);
+        })
     }
 
     else {
