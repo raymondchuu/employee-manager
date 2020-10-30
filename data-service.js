@@ -75,3 +75,93 @@ module.exports.getDepartments = () => {
         }
     })
 }
+
+module.exports.addEmployee = (employeeData) => {
+    return new Promise((resolve, reject) => {
+        if (employeeData.isManager == undefined) {
+            employeeData.isManager = false;
+        }
+
+        else {
+            employeeData.isManager = true;
+        } 
+
+        employeeData.employeeNum = employees.length + 1;
+        employees.push(employeeData);
+
+        resolve();
+    })
+}
+
+module.exports.getEmployeesByStatus = (status) => {
+    return new Promise((resolve, reject) => {
+        let statusEmployees = [];
+
+        for (var i = 0; i < employees.length; ++i) {
+            if (employees[i].status == status) {
+                statusEmployees.push(employees[i]);
+            }
+        }
+
+        if (statusEmployees.length > 0) {
+            resolve(statusEmployees);
+        }
+
+        else {
+            reject("No employees found!");
+        }
+    })
+}
+
+module.exports.getEmployeesByDepartment = (department) => {
+    return new Promise((resolve, reject) => {
+        let depEmployees = [];
+
+        for (var i = 0; i < employees.length; ++i) {
+            if (employees[i].department == department) {
+                depEmployees.push(employees[i]);
+            }
+        }
+
+        if (depEmployees.length > 0) {
+            resolve(depEmployees);
+        }
+
+        else {
+            reject("No employees found!");
+        }
+    })
+}
+
+module.exports.getEmployeesByManager = (manager) => {
+    return new Promise((resolve, reject) => {
+        let manEmployees = [];
+
+        for (var i = 0; i < employees.length; ++i) {
+            if (employees[i].employeeManagerNum == manager) {
+                manEmployees.push(employees[i]);
+            }
+        }
+
+        if (manEmployees.length > 0) {
+            resolve(manEmployees);
+        }
+
+        else {
+            reject("No employees found!");
+        }
+    })
+}
+
+module.exports.getEmployeeByNum = (num) => {
+    return new Promise((resolve, reject) => {
+        let found = false;
+        for (var i = 0; i < employees.length && !found; ++i) {
+            if (employees[i].employeeNum == num) {
+                resolve(employees[i]);
+            }
+        }
+
+        reject("Employee not found!");
+    })
+}
