@@ -78,7 +78,17 @@ app.get('/about', (req, res) => {
 
 //Route to addEmployee hbs
 app.get('/employees/add', (req, res) => {
-    res.render('addEmployee');
+    Dataservice.getDepartments()
+    .then((data) => {
+        res.render("addEmployee", {
+            departments: data
+        })
+    })
+    .catch((err) => {
+        res.render("addEmployee", {
+            departments: []
+        })
+    })
 })
 
 //Route addImage hbs
@@ -89,6 +99,8 @@ app.get('/images/add', (req, res) => {
 
 //Route that checks if there is a query first to display the appropriate employees
 app.get('/employees', (req, res) => {
+    var callfunction;
+
     if (req.query.status) {
         callfunction = Dataservice.getEmployeesByStatus(req.query.status)
     }
@@ -107,15 +119,24 @@ app.get('/employees', (req, res) => {
 
     callfunction
     .then((data) => {
-        res.render("employees", {
-            employees: data
-        })
+        if (data.length > 0) {
+            res.render("employees", {
+                employees: data
+            })
+        }
+
+        else {
+            res.render("employees", {
+                message: "No results"
+            })
+        }
+
     })
     .catch((err) => {
         res.render("employees", {
-            message: "no results"
+            message: err
         })
-    }) 
+    });
 
 });
 
@@ -123,13 +144,22 @@ app.get('/employees', (req, res) => {
 app.get('/departments', (req, res) => {
     Dataservice.getDepartments()
     .then((data) => {
-        res.render("departments", {
-            departments: data
-        })
+        if (data.length > 0) {
+            res.render("departments", {
+                departments: data
+            })
+        }
+
+        else {
+            res.render("departments", {
+                message: "No results"
+            })
+        }
+
     })
     .catch((err) => {
         res.render("departments", {
-            message: "no results" 
+            message: err 
         })
     })
 });
@@ -157,22 +187,54 @@ app.get('/images', (req, res) => {
 //Route that posts the newly added employee into the employees array
 app.post('/employees/add', (req, res) => {
     Dataservice.addEmployee(req.body)
-    .then(res.redirect('/employees'));
+    .then(res.redirect('/employees'))
+    .catch((err) => {
+        console.log(err);
+    })
 })
 
 //Route that retrieves an employee with a given employee number in the param
 app.get('/employee/:value', (req, res) => {
+    let viewData = {}
+
     Dataservice.getEmployeeByNum(req.params.value)
     .then((data) => {
-        res.render("employee", {
-            employee: data
-        })
+        if (data) {
+            viewData.employee = data.dataValues;
+        }
+        else {
+            viewData.employee = null;
+        }
     })
-    .catch((err) => {
-        res.render("employee", {
-            message: "no results"
-        })
+    .catch(() => {
+        viewData.employee = null;
     })
+
+    .then(Dataservice.getDepartments)
+    .then((data) => {
+        viewData.departments = data;
+
+        for (let i = 0; i < viewData.departments.length; ++i) {
+            if (viewData.departments[i].departmentId == viewData.employee.department) {
+                viewData.departments[i].selected = true;
+            }
+        }
+    })
+    .catch(() => {
+        viewData.departments = [];
+    })
+
+    .then(() => {
+        if (viewData.employee == null) {
+            res.status(404).send("Employee Not Found");
+        }
+        else {
+            res.render("employee", {
+                viewData: viewData
+            })
+        }
+    })
+
 })
 
 //updates employee route
@@ -183,6 +245,52 @@ app.post('/employee/update', (req, res) => {
         res.send(err);
     }) 
 })
+
+app.get('/departments/add', (req, res) => {
+    res.render('addDepartment');
+})
+
+app.post('/departments/add', (req, res) => {
+    Dataservice.addDepartment(req.body)
+    .then(res.redirect('/departments'))
+    .catch((err) => {
+        console.log(err);
+    })
+})
+
+app.post('/departments/update', (req, res) => {
+    Dataservice.updateDepartment(req.body)
+    .then(res.redirect('/departments'))
+    .catch((err) => {
+        res.send(err);
+    })
+})
+
+app.get('/department/:departmentId', (req, res) => {
+    Dataservice.getDepartmentById(req.params.departmentId)
+    .then((data) => {
+        if (data == undefined) {
+            res.status(404).send("Department Not Found");
+        }
+        res.render("department", {
+            department: data
+        })
+    })
+    .catch((err) => {
+        res.status(404).send("Department Not Found");
+    })
+})
+
+app.get('/employees/delete/:empNum', (req, res) => {
+    Dataservice.deleteEmployeeByNum(req.params.empNum)
+    .then(() => {
+        res.redirect("/employees");
+    })
+    .catch((err) => {
+        res.status(500).send("Unable to remove Employee/Employee not found");
+    })
+})
+
 
 
 //Catches all requests that do not match any of the URL of the routes above

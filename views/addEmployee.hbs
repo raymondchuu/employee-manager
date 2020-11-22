@@ -124,10 +124,6 @@
 
                 </div>
 
-
-
-
-
             </fieldset>
 
 
@@ -192,24 +188,24 @@
 
                             <label for="department">Department</label>
 
+                            {{#if departments}}
+                                    
                                 <select class="form-control" name="department" id="department">
 
-                                    <option value="1">Creative Services</option>
+                                    {{#each departments}}
 
-                                    <option value="2">Product Development</option>
+                                        <option value="{{dataValues.departmentId}}">{{dataValues.departmentName}}</option>
 
-                                    <option value="3">Marketing</option>
+                                    {{/each}}
 
-                                    <option value="4">Strategic Planning</option>
+                                </select>
 
-                                    <option value="5">Accounting</option>
+                            {{else}}
 
-                                    <option value="6">Human Resources</option>
+                                <div>No Departments</div>
 
-                                    <option value="7">Quality Analysis</option>
-
-                            </select>
-
+                            {{/if}}
+                                
                         </div>
 
                     </div>

@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-md-12">
-        <h2>Employees</h2>
+        <h2>Employees <a href="/employees/add" class="btn btn-success pull-right">Add New Employee</a></h2>
         <hr />
         <div class="table-responsive">
             <table class="table">
@@ -19,14 +19,15 @@
                 <tbody>
                     {{#each employees}}
                     <tr>
-                        <td> {{employeeNum}} </td>
-                        <td><a href="/employee/{{employeeNum}}"> {{firstName}} {{lastName}} </a></td>
-                        <td><a href="mailto:{{email}}"> {{email}} </a></td>
-                        <td> {{addressStreet}}, {{addressState}}, {{addressPostal}} </td>
-                        <td><a href="/employees?manager={{employeeManagerNum}}"> {{employeeManagerNum}} </a></td>
-                        <td><a href="/employees?status={{status}}"> {{status}} </a></td>
-                        <td><a href="/employees?department={{department}}"> {{department}} </a></td>
-                        <td> {{hireDate}} </td>
+                        <td> {{dataValues.employeeNum}} </td>
+                        <td><a href="/employee/{{dataValues.employeeNum}}"> {{dataValues.firstName}} {{dataValues.lastName}} </a></td>
+                        <td><a href="mailto:{{dataValues.email}}"> {{dataValues.email}} </a></td>
+                        <td> {{dataValues.addressStreet}}, {{dataValues.addressState}}, {{dataValues.addressPostal}} </td>
+                        <td><a href="/employees?manager={{dataValues.employeeManagerNum}}"> {{dataValues.employeeManagerNum}} </a></td>
+                        <td><a href="/employees?status={{dataValues.status}}"> {{dataValues.status}} </a></td>
+                        <td><a href="/employees?department={{dataValues.department}}"> {{dataValues.department}} </a></td>
+                        <td> {{dataValues.hireDate}} </td>
+                        <td><a href="/employees/delete/{{dataValues.employeeNum}}" class="btn btn-danger">Remove</a></td>
                     </tr>
                     {{else}}
                     <div class="col-md-12 text-center">
