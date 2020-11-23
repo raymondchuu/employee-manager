@@ -13,8 +13,8 @@
                 <tbody>
                     {{#each departments}}
                     <tr>
-                        <td><a href="/department/{{dataValues.departmentId}}">{{dataValues.departmentId}}</a></td>
-                        <td><a href="/employees?department={{dataValues.departmentId}}"> {{dataValues.departmentName}} </a></td>
+                        <td><a href="/employees?department={{dataValues.departmentId}}">{{dataValues.departmentId}}</a></td>
+                        <td><a href="/department/{{dataValues.departmentId}}"> {{dataValues.departmentName}} </a></td>
                     </tr>
                     {{else}}
                     <div class="col-md-12 text-center">
