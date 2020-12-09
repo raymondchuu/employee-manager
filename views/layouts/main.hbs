@@ -51,12 +51,25 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
           <ul class="nav navbar-nav">
-
+            
             {{#navLink "/"}}Home{{/navLink}}
 
             {{#navLink "/about"}}About{{/navLink}}
 
           </ul>
+
+            {{#if userSession.user}}
+            <form class="navbar-form navbar-right">
+              <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="userMenu" data-toggle="dropdown">
+                  <span class="glyphicon glyphiconuser"></span>&nbsp;&nbsp;{{userSession.user.userName}}&nbsp;&nbsp;<span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="userMenu">
+                  <li><a href="/userHistory">User History</a></li>
+                  <li><a href="/logout">Log Out</a></li>
+                </ul>
+              </div>
+            </form>
 
           <ul class="nav navbar-nav navbar-right">
 
@@ -67,6 +80,13 @@
             {{#navLink "/departments"}}Departments{{/navLink}}
 
           </ul>
+
+          {{else}}
+            <form class="navbar-form navbar-right">
+              <a href="/register" class="btn btn-success"><span class="glyphicon glyphiconcog"></span>&nbsp;&nbsp;Register</a>
+              <a href="/login" class="btn btn-primary"><span class="glyphicon glyphicon-chevronright"></span>&nbsp;&nbsp;Log In</a>
+            </form>
+          {{/if}}
 
         </div><!-- /.navbar-collapse -->
 
@@ -80,17 +100,16 @@
 
     </div>
 
-
-
     <!-- Latest compiled and minified jQuery 3.2.1 JavaScript -->
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="crossorigin="anonymous"></script>
 
 
-
     <!-- Latest compiled and minified Bootstrap 3.3.7 JavaScript -->
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
 
   </body>
 

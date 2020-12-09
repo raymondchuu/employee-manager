@@ -1,10 +1,10 @@
 /***************************************************************************************************
- * BTI325 – Assignment 5
+ * BTI325 – Assignment 6
  * I declare that this assignment is my own work in accordance with Seneca Academic Policy. No part 
  * of this assignment has been copied manually or electronically from any other source 
  * (including 3rd party web sites) or distributed to other students. 
  * 
- * Name: Raymond Chu Student ID: 113429195 Date: 2020 - 11 - 22 
+ * Name: Raymond Chu Student ID: 113429195 Date: 2020 - 12 - 03 
  * 
  * Online (Heroku) Link: https://agile-badlands-56742.herokuapp.com/
  * 
@@ -13,22 +13,43 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const multer = require('multer');
-const Dataservice = require('./data-service.js');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const exphbs = require('express-handlebars');
+const clientSessions = require('client-sessions');
+
+const Dataservice = require('./data-service.js');
+const dataServiceAuth = require('./data-service-auth');
+
 const HTTP_PORT = process.env.PORT || 8080;
 
 //Middlewares
 app.use(express.static('public'));
-
 app.use(bodyParser.urlencoded({ extended: true }));
-
 app.use((req, res, next) => {
     let route = req.baseUrl + req.path;
     app.locals.activeRoute = (route == "/") ? "/" : route.replace(/\/$/, "");
     next();
 });
+app.use(clientSessions({
+    cookieName: "userSession", 
+    secret: "BTI325appA6",
+    duration: 2 * 60 * 1000,
+    activeDuration: 1000 * 60
+}));
+app.use((req, res, next) => {
+    res.locals.userSession = req.userSession;
+    next();
+});
+
+const ensureLogin = (req, res, next) => {
+    if (!req.userSession.user) {
+        res.redirect("/login");
+    }
+    else {
+        next();
+    }
+};
 
 //express-handlebars
 app.engine('.hbs', exphbs({
@@ -59,7 +80,7 @@ const storage = multer.diskStorage({
     filename: function(req, file, cb) {
         cb(null, Date.now() + path.extname(file.originalname));
     }
-})
+});
 
 //Tells multer to use diskStorage function for naming files instead of default
 const upload = multer({ storage: storage });
@@ -77,7 +98,7 @@ app.get('/about', (req, res) => {
 });
 
 //Route to addEmployee hbs
-app.get('/employees/add', (req, res) => {
+app.get('/employees/add', ensureLogin, (req, res) => {
     Dataservice.getDepartments()
     .then((data) => {
         res.render("addEmployee", {
@@ -89,16 +110,16 @@ app.get('/employees/add', (req, res) => {
             departments: []
         })
     })
-})
+});
 
 //Route addImage hbs
-app.get('/images/add', (req, res) => {
+app.get('/images/add', ensureLogin, (req, res) => {
     res.render('addImage');
-})
+});
 
 
 //Route that checks if there is a query first to display the appropriate employees
-app.get('/employees', (req, res) => {
+app.get('/employees', ensureLogin, (req, res) => {
     var callfunction;
 
     if (req.query.status) {
@@ -141,7 +162,7 @@ app.get('/employees', (req, res) => {
 });
 
 //Departments Route
-app.get('/departments', (req, res) => {
+app.get('/departments', ensureLogin, (req, res) => {
     Dataservice.getDepartments()
     .then((data) => {
         if (data.length > 0) {
@@ -161,17 +182,17 @@ app.get('/departments', (req, res) => {
         res.render("departments", {
             message: err 
         })
-    })
+    });
 });
 
 
 //Route to post image and save image into the public/images/uplaoded directory
-app.post('/images/add',upload.single("imageFile"), (req, res) => {
+app.post('/images/add', ensureLogin, upload.single("imageFile"), (req, res) => {
     res.redirect("/images");
-})
+});
 
 //Route that reads the directory where the images are saved and returns a JSON string to screen
-app.get('/images', (req, res) => {
+app.get('/images', ensureLogin, (req, res) => {
    /*  fs.readdir("./public/images/uploaded", (err, items) => {
         if (err) throw err;
         res.json({"images" : items});
@@ -181,21 +202,21 @@ app.get('/images', (req, res) => {
         res.render("images", {
             image: items
         });
-    })
-})
+    });
+});
 
 //Route that posts the newly added employee into the employees array
-app.post('/employees/add', (req, res) => {
+app.post('/employees/add', ensureLogin, (req, res) => {
     Dataservice.addEmployee(req.body)
     .then(res.redirect('/employees'))
     .catch((err) => {
         console.log(err);
-    })
-})
+    });
+});
 
 //Route that retrieves an employee with a given employee number in the param
-app.get('/employee/:value', (req, res) => {
-    let viewData = {}
+app.get('/employee/:value', ensureLogin, (req, res) => {
+    let viewData = {};
 
     Dataservice.getEmployeeByNum(req.params.value)
     .then((data) => {
@@ -231,42 +252,41 @@ app.get('/employee/:value', (req, res) => {
         else {
             res.render("employee", {
                 viewData: viewData
-            })
+            });
         }
-    })
-
-})
+    });
+});
 
 //updates employee route
-app.post('/employee/update', (req, res) => {
+app.post('/employee/update', ensureLogin, (req, res) => {
     Dataservice.updateEmployee(req.body)
     .then(res.redirect('/employees'))
     .catch((err) => {
         res.send(err);
-    }) 
-})
+    }) ;
+});
 
-app.get('/departments/add', (req, res) => {
+app.get('/departments/add', ensureLogin, (req, res) => {
     res.render('addDepartment');
-})
+});
 
-app.post('/departments/add', (req, res) => {
+app.post('/departments/add', ensureLogin, (req, res) => {
     Dataservice.addDepartment(req.body)
     .then(res.redirect('/departments'))
     .catch((err) => {
         console.log(err);
-    })
-})
+    });
+});
 
-app.post('/departments/update', (req, res) => {
+app.post('/departments/update', ensureLogin, (req, res) => {
     Dataservice.updateDepartment(req.body)
     .then(res.redirect('/departments'))
     .catch((err) => {
         res.send(err);
-    })
-})
+    });
+});
 
-app.get('/department/:departmentId', (req, res) => {
+app.get('/department/:departmentId', ensureLogin, (req, res) => {
     Dataservice.getDepartmentById(req.params.departmentId)
     .then((data) => {
         if (data == undefined) {
@@ -278,18 +298,72 @@ app.get('/department/:departmentId', (req, res) => {
     })
     .catch((err) => {
         res.status(404).send("Department Not Found");
-    })
-})
+    });
+});
 
-app.get('/employees/delete/:empNum', (req, res) => {
+app.get('/employees/delete/:empNum', ensureLogin, (req, res) => {
     Dataservice.deleteEmployeeByNum(req.params.empNum)
     .then(() => {
         res.redirect("/employees");
     })
     .catch((err) => {
         res.status(500).send("Unable to remove Employee/Employee not found");
+    });
+});
+
+app.get('/login', (req, res) => {
+    res.render("login")
+});
+
+app.get('/register', (req, res) => {
+    res.render("register");
+});
+
+app.post('/register', (req, res) => {
+    dataServiceAuth.registerUser(req.body)
+    .then((data) => {
+        res.render("register", {
+            successMessage: "User created"
+        });
     })
-})
+    .catch((err) => {
+        res.render("register", {
+            errorMessage: err,
+            userName: req.body.userName
+        })
+    });
+});
+
+app.post('/login', (req, res) => {
+    req.body.userAgent = req.get('User-Agent');
+    dataServiceAuth.checkUser(req.body)
+    .then((data) => {
+        req.userSession.user = {
+            userName: data.userName,
+            email: data.email,
+            loginHistory: data.loginHistory
+        }
+        console.log(req.userSession.user.loginHistory);
+        res.redirect('/employees');
+    })
+    .catch((err) => {
+        res.render("login", {
+            errorMessage: err,
+            userName: req.body.userName
+        })
+    })
+});
+
+app.get('/logout', (req, res) => {
+    req.userSession.reset();
+    res.redirect('/login');
+});
+
+app.get('/userHistory', ensureLogin, (req, res) => {
+    res.render("userHistory");
+});
+
+
 
 
 
@@ -300,9 +374,12 @@ app.use((req, res) => {
 
 //Listening for port
 Dataservice.initialize()
-.then(
-    app.listen(HTTP_PORT, console.log('Express http server listening on ' + HTTP_PORT))
-)
+.then(dataServiceAuth.initialize)
+.then(() => {
+    app.listen(HTTP_PORT, () => {
+        console.log('Express http server listening on ' + HTTP_PORT)
+    });
+})
 .catch((err) => {
     console.log(err);
 })

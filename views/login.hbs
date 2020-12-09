@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <!-- Latest compiled and minified Bootstrap 3.3.7 CSS -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+      <title>HOME </title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+    <div class="col-md-12">
+        <h2> Log In </h2>
+        <hr>
+        {{#if errorMessage}}
+        <div class="alert alert-danger"> 
+            <strong>Error:</strong> 
+            {{errorMessage}}
+        </div>
+        {{/if}}
+        <form name="login" method = "POST" action="/login">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="userName" id="userName" placeholder="User Name" required value="{{userName}}">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <input class="form-control" type="password" name="password" id="password" placeholder="Password" required>
+                    </div>
+                </div>
+            </div>    
+            <input class="btn btn-success pull-right" type="submit" value="Login">
+        </form>
+    </div>
+</div>
+    </div>
+
+    <!-- Latest compiled and minified jQuery 3.2.1 JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="crossorigin="anonymous"></script>
+
+    <!-- Latest compiled and minified Bootstrap 3.3.7 JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  </body>
+</html>
