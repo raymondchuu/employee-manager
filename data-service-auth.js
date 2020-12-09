@@ -18,7 +18,7 @@ const userSchema = new Schema({
 let User;
 module.exports.initialize = () => {
     return new Promise((resolve, reject) => {
-        let db =  mongoose.connect("mongodb+srv://rchu14:senecabti325app@bti325-app.racjw.mongodb.net/bti325app?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true })
+        mongoose.connect("mongodb+srv://rchu14:senecabti325app@bti325-app.racjw.mongodb.net/bti325app?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true })
          .then(() => {
             User = mongoose.model("users", userSchema);
             console.log("DB connected successfully!");
@@ -34,11 +34,11 @@ module.exports.initialize = () => {
 module.exports.registerUser = (userData) => {
     return new Promise((resolve, reject) => {
         if (userData.userName === "" || userData.password === "" || userData.password2 === "") {
-            reject("Error: user name or password cannot be empty or only white spaces!");
+            reject("User name or password cannot be empty or only white spaces!");
         }
 
         if (userData.password != userData.password2) {
-            reject("Error: Passwords do not match!");
+            reject("Passwords do not match!");
         }
 
         if (userData.password === userData.password2) {

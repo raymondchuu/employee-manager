@@ -25,20 +25,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                        <!--<tr> 
-                            <td> 2018-11-18T19:17:37.000Z </td>
-                            <td> Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36
+                    {{#each userSession.user.loginHistory}}
+                        <tr>
+                            <td>{{dateTime}}</td>
+                            <td>{{userAgent}}</td>
                         </tr>
-                        <tr> 
-                            <td> 2018-11-19T05:19:05.000Z </td>
-                            <td> Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36
-                        </tr>-->
-                        {{#each userSession.user.loginHistory}}
-                            <tr>
-                                <td>{{dateTime}}</td>
-                                <td>{{userAgent}}</td>
-                            </tr>
-                        {{/each}}
+                    {{/each}}
                 </tbody>
             </table>
         </div>

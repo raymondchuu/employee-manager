@@ -4,7 +4,7 @@
  * of this assignment has been copied manually or electronically from any other source 
  * (including 3rd party web sites) or distributed to other students. 
  * 
- * Name: Raymond Chu Student ID: 113429195 Date: 2020 - 12 - 03 
+ * Name: Raymond Chu Student ID: 113429195 Date: 2020 - 12 - 09 
  * 
  * Online (Heroku) Link: https://agile-badlands-56742.herokuapp.com/
  * 
@@ -17,7 +17,6 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const exphbs = require('express-handlebars');
 const clientSessions = require('client-sessions');
-
 const Dataservice = require('./data-service.js');
 const dataServiceAuth = require('./data-service-auth');
 
@@ -68,7 +67,6 @@ app.engine('.hbs', exphbs({
                 return options.inverse(this);
             else 
                 return options.fn(this);
-            
         }
     }
  }));
@@ -343,7 +341,6 @@ app.post('/login', (req, res) => {
             email: data.email,
             loginHistory: data.loginHistory
         }
-        console.log(req.userSession.user.loginHistory);
         res.redirect('/employees');
     })
     .catch((err) => {
