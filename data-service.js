@@ -55,6 +55,7 @@ module.exports.initialize = () => {
     return new Promise((resolve, reject) => {
         sequelize.sync()
         .then(() => {
+            console.log("postgres connected!");
            resolve();
         })
 
